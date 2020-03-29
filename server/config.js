@@ -1,9 +1,15 @@
 if(process.env.NODE_ENV === 'production'){
+    const url = require('url');
+
+    const redisURL = url.parse(process.env.REDISCLOUD_URL);
+    const passIndex = 1;
+    const redisPass = redisURL.auth.split('[:]')[passIndex];
+
     module.exports = {
-        REDISCLOUD_URL: process.env.REDISCLOUD_URL,
-        REDISCLOUD_PORT: process.env.REDISCLOUD_PORT,
-        REDISCLOUD_PASSWORD: process.env.REDISCLOUD_PASSWORD,
-    };
+        REDISCLOUD_URL: redisURL.hostname,
+        REDISCLOUD_PORT: redisURL.port,
+        REDISCLOUD_PASSWORD: redisPass
+    };    
 } else {
     module.exports = require('./.secret.js');
 }
