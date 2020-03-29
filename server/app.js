@@ -14,7 +14,7 @@ const RedisStore  = require('connect-redis')(session);
 
 // Import modules.
 const router = require('./router.js');
-const SECRET = require('./.secret.js') || {};
+const config = require('./config.js');
 
 //////////////////
 // CONFIGURATION
@@ -41,19 +41,11 @@ const mongodb = {
 };
 
 // Setup the Redis client.
-const redisClient = (() => { 
-
-    // Create the client.
-    return redis.createClient({
-        host: `${process.env.REDISCLOUD_URL 
-            || SECRET.REDISCLOUD_URL}`,
-        port: `${process.env.REDISCLOUD_PORT 
-            || SECRET.REDISCLOUD_PORT}`,
-        password: `${process.env.REDISCLOUD_PASSWORD 
-            || SECRET.REDISCLOUD_PASSWORD}`
-    });
-
-})();
+const redisClient = redis.createClient({
+    host: `${config.REDISCLOUD_URL}`,
+    port: `${config.REDISCLOUD_PORT}`,
+    password: `${config.REDISCLOUD_PASSWORD}`
+});
 
 // Setup the Redis store.
 const redisStore = new RedisStore({ client: redisClient });
