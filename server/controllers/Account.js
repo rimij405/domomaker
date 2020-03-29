@@ -15,15 +15,15 @@ const loginPage = (req, res) => {
 // Log in the user.
 const login = (req, res) => {
 
+    // Error check.
+    if (!req.body.username || !req.body.pass){
+        return res.status(400).json({ error: 'RAWR! All fields are required.' });
+    }
+
     // Cast values to string to cover up security flaws.
     const body = {
         username: `${req.body.username}`,
         pass: `${req.body.pass}`,
-    }
-
-    // Error check.
-    if (!body.username || !body.pass){
-        return res.status(400).json({ error: 'RAWR! All fields are required.' });
     }
 
     // Authenticate user callback.
@@ -31,6 +31,9 @@ const login = (req, res) => {
         if(err || !account){
             return res.status(401).json({ error: 'Wrong username or password' });
         }
+
+        // Store session information.
+        req.session.account = Account.AccountModel.toAPI(account);
 
         return res.json({ redirect: '/maker' });
     };
@@ -47,16 +50,16 @@ const signupPage = (req, res) => {
 // Sign user up.
 const signup = (req, res) => {
     
+    // Error check.
+    if (!req.body.username || !req.body.pass || !req.body.pass2){
+        return res.status(400).json({ error: 'RAWR! All fields are required.' });
+    }
+
     // Cast values to string to cover up security flaws.
     const body = {
         username: `${req.body.username}`,
         pass: `${req.body.pass}`,
         pass2: `${req.body.pass2}`,
-    }
-
-    // Error check.
-    if (!body.username || !body.pass || !body.pass2){
-        return res.status(400).json({ error: 'RAWR! All fields are required.' });
     }
 
     if (body.pass !== body.pass2){
@@ -76,8 +79,11 @@ const signup = (req, res) => {
         // Create new account instance.
         const accountInstance = new Account.AccountModel(accountData);
 
-        // On successful save. (Implied return)
-        const onSuccess = () => res.json({ redirect: '/maker' });
+        // On successful save. (Explicit return)
+        const onSuccess = () => { 
+            req.session.account = Account.AccountModel.toAPI(accountInstance);
+            return res.json({ redirect: '/maker' });
+        }
 
         // On error during save. (Explicit returns)
         const onError = (err) => {
@@ -102,6 +108,7 @@ const signup = (req, res) => {
 
 // Logout.
 const logout = (req, res) => {
+    req.session.destroy();
     res.redirect('/');
 };
 
