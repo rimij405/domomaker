@@ -9,7 +9,7 @@ const Account = models.Account;
 
 // Render the login page.
 const loginPage = (req, res) => {
-    res.render('login');
+    res.render('login', { csrfToken: req.csrfToken() });
 };
 
 // Log in the user.
@@ -44,7 +44,7 @@ const login = (req, res) => {
 
 // Render the signup page.
 const signupPage = (req, res) => {
-    res.render('signup');
+    res.render('signup', { csrfToken: req.csrfToken() });
 };
 
 // Sign user up.
