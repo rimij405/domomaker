@@ -15,7 +15,7 @@
     "watch-app": "babel --watch ./client/app ./client/helper --presets @babel/preset-react --out-file ./hosted/bundle.js --verbose",
     "watch-server": "nodemon --watch ./server ./server/app.js",
     "watch": "concurrently -k \"npm:watch-*\"",
-    "start": "npm run build && node ./server/app.js",
+    "start": "node ./server/app.js",
     "pretest": "eslint ./server --fix",
     "test": "echo \"Tests complete\""
   },
