@@ -13,7 +13,7 @@
     "build": "concurrently \"npm:build-*\"",    
     "watch-login": "babel --watch ./client/login ./client/helper --presets @babel/preset-react --out-file ./hosted/loginBundle.js --verbose",
     "watch-app": "babel --watch ./client/app ./client/helper --presets @babel/preset-react --out-file ./hosted/bundle.js --verbose",
-    "watch-server": "nodemon --watch ./server ./server/app.js",
+    "watch-server": "nodemon --watch ./server --exec \"node ./server/app.js\"",
     "watch": "concurrently -k \"npm:watch-*\"",
     "start": "node ./server/app.js",
     "pretest": "eslint ./server --fix",

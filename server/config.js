@@ -1,5 +1,5 @@
 const url = require('url');
-const secret = require('./.secret.js');
+const dotenv = require('dotenv');
 
 if (process.env.NODE_ENV === 'production') {
   console.log(process.env.REDISCLOUD_URL);
@@ -8,11 +8,20 @@ if (process.env.NODE_ENV === 'production') {
   const passIndex = 1;
   const redisPass = redisURL.auth.split(':')[passIndex];
 
+  // Export production configuration settings.
   module.exports = {
     REDISCLOUD_URL: redisURL.hostname,
     REDISCLOUD_PORT: redisURL.port,
     REDISCLOUD_PASSWORD: redisPass,
   };
 } else {
-  module.exports = secret;
+  // Read configuration file if this becomes an issue.
+  dotenv.config({ path: 'server/.env' });
+
+  // Export secrets from dotenv.
+  module.exports = {
+    REDISCLOUD_URL: process.env.REDISCLOUD_URL,
+    REDISCLOUD_PORT: process.env.REDISCLOUD_PORT,
+    REDISCLOUD_PASSWORD: process.env.REDISCLOUD_PASSWORD,
+  };
 }
