@@ -4,44 +4,45 @@ const middleware = require('./middleware');
 
 // Create the router.
 const router = (app) => {
-    
-    app.get('/login',
-        middleware.requiresSecure, 
-        middleware.requiresLogout,
-        controllers.Account.loginPage);
+  app.get('/getToken',
+    middleware.requiresSecure,
+    controllers.Account.getToken);
 
-    app.post('/login', 
-        middleware.requiresSecure, 
-        middleware.requiresLogout,
-        controllers.Account.login);
+  app.get('/getDomos',
+    middleware.requiresLogin,
+    controllers.Domo.getDomos);
 
-    app.get('/signup', 
-        middleware.requiresSecure, 
-        middleware.requiresLogout,
-        controllers.Account.signupPage);
+  app.get('/login',
+    middleware.requiresSecure,
+    middleware.requiresLogout,
+    controllers.Account.loginPage);
 
-    app.post('/signup', 
-        middleware.requiresSecure, 
-        middleware.requiresLogout,
-        controllers.Account.signup);
+  app.post('/login',
+    middleware.requiresSecure,
+    middleware.requiresLogout,
+    controllers.Account.login);
 
-    app.get('/logout', 
-        middleware.requiresLogin,
-        controllers.Account.logout);
+  app.post('/signup',
+    middleware.requiresSecure,
+    middleware.requiresLogout,
+    controllers.Account.signup);
 
-    app.get('/maker',
-        middleware.requiresLogin, 
-        controllers.Domo.makerPage);
+  app.get('/logout',
+    middleware.requiresLogin,
+    controllers.Account.logout);
 
-    app.post('/maker', 
-        middleware.requiresLogin,
-        controllers.Domo.make);
+  app.get('/maker',
+    middleware.requiresLogin,
+    controllers.Domo.makerPage);
 
-    app.get('/', 
-        middleware.requiresSecure,
-        middleware.requiresLogout, 
-        controllers.Account.loginPage);
+  app.post('/maker',
+    middleware.requiresLogin,
+    controllers.Domo.make);
 
+  app.get('/',
+    middleware.requiresSecure,
+    middleware.requiresLogout,
+    controllers.Account.loginPage);
 };
 
 // Export the router.

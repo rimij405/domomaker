@@ -1,5 +1,5 @@
 {
-  "name": "Logins",
+  "name": "DomomakerD",
   "version": "1.0.0",
   "engines": {
     "node": "12.16.0",
@@ -8,10 +8,14 @@
   "description": "A Simple Login Example using Node.js, Mongo and Redis",
   "main": "./server/app.js",
   "scripts": {
-    "build": "babel ./client --out-file ./hosted/bundle.js",
-    "watch": "babel --watch ./client --out-file ./hosted/bundle.js",
-    "nodemon": "nodemon --watch ./server ./server/app.js",
-    "start": "node ./server/app.js",
+    "build-login": "babel ./client/login ./client/helper --presets @babel/preset-react --out-file ./hosted/loginBundle.js",
+    "build-app": "babel ./client/app ./client/helper --presets @babel/preset-react --out-file ./hosted/bundle.js",
+    "build": "concurrently \"npm:build-*\"",    
+    "watch-login": "babel --watch ./client/login ./client/helper --presets @babel/preset-react --out-file ./hosted/loginBundle.js --verbose",
+    "watch-app": "babel --watch ./client/app ./client/helper --presets @babel/preset-react --out-file ./hosted/bundle.js --verbose",
+    "watch-server": "nodemon --watch ./server ./server/app.js",
+    "watch": "concurrently -k \"npm:watch-*\"",
+    "start": "npm run build && node ./server/app.js",
     "pretest": "eslint ./server --fix",
     "test": "echo \"Tests complete\""
   },
@@ -36,6 +40,7 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
+    "concurrently": "^5.1.0",
     "connect-redis": "^4.0.4",
     "cookie-parser": "^1.4.5",
     "csurf": "^1.11.0",
