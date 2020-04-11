@@ -10,7 +10,7 @@
   "scripts": {
     "build-login": "babel ./client/login ./client/helper --presets @babel/preset-react --out-file ./hosted/loginBundle.js",
     "build-app": "babel ./client/app ./client/helper --presets @babel/preset-react --out-file ./hosted/bundle.js",
-    "build": "concurrently \"npm:build-*\"",    
+    "build": "concurrently \"npm:build-*\"",
     "watch-login": "babel --watch ./client/login ./client/helper --presets @babel/preset-react --out-file ./hosted/loginBundle.js --verbose",
     "watch-app": "babel --watch ./client/app ./client/helper --presets @babel/preset-react --out-file ./hosted/bundle.js --verbose",
     "watch-server": "nodemon --watch ./server --exec \"node ./server/app.js\"",
@@ -44,6 +44,7 @@
     "connect-redis": "^4.0.4",
     "cookie-parser": "^1.4.5",
     "csurf": "^1.11.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-handlebars": "^3.1.0",
     "express-session": "^1.17.0",
