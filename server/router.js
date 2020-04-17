@@ -39,6 +39,11 @@ const router = (app) => {
     middleware.requiresLogin,
     controllers.Domo.make);
 
+  app.post('/deleter',
+    middleware.requiresSecure,
+    middleware.requiresLogin,
+    controllers.Domo.deleteDomo);
+
   app.get('/',
     middleware.requiresSecure,
     middleware.requiresLogout,

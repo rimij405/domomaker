@@ -12,7 +12,7 @@ const getDomos = (req, res) => Domo.DomoModel.findByOwner(req.session.account._i
     console.log(err);
     return res.status(400).json({ error: 'An error occurred' });
   }
-  return res.json({ domos: docs });
+  return res.json({ csrfToken: req.csrfToken(), domos: docs });
 });
 
 // Request a Domo page.
@@ -26,10 +26,27 @@ const makerPage = (req, res) => {
   });
 };
 
+const deleteDomo = (req, res) => {
+
+  // Error check.
+  if(!req.body.id){
+    return res.status(400).json({ error: 'Missing ID.' });
+  }
+
+  Domo.DomoModel.remove({ _id: req.body.id }, function(err){
+    if(err){
+      console.error(err);
+      return res.status(400).json({ error: "An error occured." });
+    }
+
+    return res.json({redirect: "/maker" });
+  });
+};
+
 // Make a Domo.
 const make = (req, res) => {
   // Error check.
-  if (!req.body.name || !req.body.age) {
+  if (!req.body.name || !req.body.age || !req.body.ranking) {
     return res.status(400).json({ error: 'RAWR! All fields are required.' });
   }
 
@@ -37,6 +54,7 @@ const make = (req, res) => {
   const domoData = {
     name: `${req.body.name}`,
     age: `${req.body.age}`,
+    ranking: `${req.body.ranking}`,
     owner: `${req.session.account._id}`,
   };
 
@@ -68,4 +86,5 @@ module.exports = {
   makerPage,
   getDomos,
   make,
+  deleteDomo
 };

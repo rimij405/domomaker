@@ -1,11 +1,9 @@
 const handleDomo = (e) => {
     e.preventDefault();
 
-    console.log("Test handleDomo.");
-
     $("#domoMessage").animate({width: 'hide'}, 350);
 
-    if($("#domoName").val() == '' || $("#domoAge").val() == '') {
+    if($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoRanking").val() == '') {
         handleError("RAWR! All fields are required");
         return false;
     }
@@ -16,6 +14,29 @@ const handleDomo = (e) => {
 
     return false;
 }
+
+const deleteDomo = (e) => {
+    e.preventDefault();
+    
+    $("#domoMessage").animate({width: 'hide'}, 350);
+
+    if(e.target.value == ''){
+        handleError("RAWR! Domo needs ID to be deleted!");
+        return false;
+    }
+
+    // console.log($(e.target).attr("data"));
+
+    const query = `id=${e.target.value}&_csrf=${$(e.target).attr("data")}`;
+
+    // console.dir(query);
+
+    sendAjax ("POST", "/deleter", query, function(){
+        loadDomosFromServer();
+    });
+
+    return false;
+};
 
 const DomoForm = (props) => {
     return(
@@ -29,6 +50,8 @@ const DomoForm = (props) => {
                 <input id="domoName" type="text" name="name" placeholder="Domo Name" />
                 <label htmlFor="age">Age: </label>
                 <input id="domoAge" type="text" name="age" placeholder="Domo Age" />
+                <label htmlFor="ranking">Ranking: </label>
+                <input id="domoRanking" type="number" name="ranking" placeholder="Domo Ranking (Out of 10)" min="0" max="10" />
                 <input type="hidden" name="_csrf" value={props.csrf} />
                 <input className="makeDomoSubmit" type="submit" value="Make Domo" />
         </form>
@@ -50,6 +73,8 @@ const DomoList = function(props) {
                 <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
                 <h3 className="domoName"> Name: {domo.name} </h3> 
                 <h3 className="domoAge"> Age: {domo.age} </h3>
+                <h3 className="domoRanking"> Ranking: {domo.ranking} </h3>
+                <button type="button" data={props.csrf} value={domo._id} onClick={deleteDomo} > Delete Domo </button>
             </div>
         );
     });
@@ -64,7 +89,7 @@ const DomoList = function(props) {
 const loadDomosFromServer = () => {
     sendAjax("GET", "/getDomos", null, (data) => {
         ReactDOM.render(
-            <DomoList domos={data.domos} />, document.querySelector("#domos")
+            <DomoList csrf={data.csrfToken} domos={data.domos} />, document.querySelector("#domos")
         );
     });
 };
@@ -75,7 +100,7 @@ const setup = function(csrf) {
     );
 
     ReactDOM.render(
-        <DomoList domos={[]} />, document.querySelector("#domos")
+        <DomoList csrf={csrf} domos={[]} />, document.querySelector("#domos")
     );
 
     loadDomosFromServer();

@@ -2,17 +2,36 @@
 
 var handleDomo = function handleDomo(e) {
   e.preventDefault();
-  console.log("Test handleDomo.");
   $("#domoMessage").animate({
     width: 'hide'
   }, 350);
 
-  if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
+  if ($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoRanking").val() == '') {
     handleError("RAWR! All fields are required");
     return false;
   }
 
   sendAjax("POST", $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
+    loadDomosFromServer();
+  });
+  return false;
+};
+
+var deleteDomo = function deleteDomo(e) {
+  e.preventDefault();
+  $("#domoMessage").animate({
+    width: 'hide'
+  }, 350);
+
+  if (e.target.value == '') {
+    handleError("RAWR! Domo needs ID to be deleted!");
+    return false;
+  } // console.log($(e.target).attr("data"));
+
+
+  var query = "id=".concat(e.target.value, "&_csrf=").concat($(e.target).attr("data")); // console.dir(query);
+
+  sendAjax("POST", "/deleter", query, function () {
     loadDomosFromServer();
   });
   return false;
@@ -40,6 +59,15 @@ var DomoForm = function DomoForm(props) {
       type: "text",
       name: "age",
       placeholder: "Domo Age"
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "ranking"
+    }, "Ranking: "), /*#__PURE__*/React.createElement("input", {
+      id: "domoRanking",
+      type: "number",
+      name: "ranking",
+      placeholder: "Domo Ranking (Out of 10)",
+      min: "0",
+      max: "10"
     }), /*#__PURE__*/React.createElement("input", {
       type: "hidden",
       name: "_csrf",
@@ -74,7 +102,14 @@ var DomoList = function DomoList(props) {
         className: "domoName"
       }, " Name: ", domo.name, " "), /*#__PURE__*/React.createElement("h3", {
         className: "domoAge"
-      }, " Age: ", domo.age, " "))
+      }, " Age: ", domo.age, " "), /*#__PURE__*/React.createElement("h3", {
+        className: "domoRanking"
+      }, " Ranking: ", domo.ranking, " "), /*#__PURE__*/React.createElement("button", {
+        type: "button",
+        data: props.csrf,
+        value: domo._id,
+        onClick: deleteDomo
+      }, " Delete Domo "))
     );
   });
   return (/*#__PURE__*/React.createElement("div", {
@@ -86,6 +121,7 @@ var DomoList = function DomoList(props) {
 var loadDomosFromServer = function loadDomosFromServer() {
   sendAjax("GET", "/getDomos", null, function (data) {
     ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
+      csrf: data.csrfToken,
       domos: data.domos
     }), document.querySelector("#domos"));
   });
@@ -96,6 +132,7 @@ var setup = function setup(csrf) {
     csrf: csrf
   }), document.querySelector("#makeDomo"));
   ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
+    csrf: csrf,
     domos: []
   }), document.querySelector("#domos"));
   loadDomosFromServer();
